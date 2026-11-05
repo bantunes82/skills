@@ -25,7 +25,7 @@ npx skills list
 npx skills --help 
 ```
 
-#### Option 2: Manual Installation
+### Option 2: Manual Installation
 
 **1. Clone this repo:**
 ```bash
@@ -38,8 +38,7 @@ git clone https://github.com/bantunes82/skills.git ~/.agents/skills/springboot-u
 git clone https://github.com/bantunes82/skills.git ~/.claude/skills/springboot-upgrade
 ```
 
-
-#### Usage
+### Usage
 
 ```
 > Upgrade this SpringBoot application
@@ -47,6 +46,7 @@ git clone https://github.com/bantunes82/skills.git ~/.claude/skills/springboot-u
 ```
 
 Skills auto-discover from `~/.agents/skills/` or `~/.claude/skills/` (for Claude Code) and your project's `skills/` directory.
+
 
 ## Skill Details
 
