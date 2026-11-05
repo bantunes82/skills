@@ -1,0 +1,103 @@
+{
+  "name": "bantunes82-dev-skills",
+  "owner": {
+    "name": "Bruno Romao Antunes",
+    "url": "https://github.com/bantunes82/"
+  },
+  "displayName": "Bruno Skills",
+  "version": "1.0.0",
+  "description": "Platform-agnostic AI agent skills for Java/SpringBoot development.",
+  "author": {
+    "name": "Bruno Romao Antunes",
+    "url": "https://github.com/bantunes82/"
+  },
+  "publisher": "bantunes82",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bantunes82/skills"
+  },
+  "homepage": "https://github.com/bantunes82/skills",
+  "license": "MIT License",
+  "keywords": [
+    "springboot",
+    "java",
+    "maven",
+    "development",
+    "jvm"
+  ],
+  "categories": [
+    "Development Tools",
+    "Java",
+    "Build Tools",
+    "Git"
+  ],
+  "platforms": [
+    "claude-code",
+    "opencode",
+    "github-copilot",
+    "gemini-cli",
+    "codex",
+    "all"
+  ],
+  "skills": [
+    {
+      "name": "springboot-upgrade",
+      "displayName": "SpringBoot Upgrade",
+      "description": "Upgrade a Maven Spring Boot application incrementally using the self-contained workflow and pinned OpenRewrite recipes.",
+      "path": "skills/springboot-upgrade",
+      "categories": ["Java", "Development Tools"],
+      "tags": ["java", "springboot", "upgrade", "maven", "dependencies"]
+    }
+  ],
+  "tools": [
+  ],
+  "dependencies": {
+    "runtime": {
+      "java": ">=8",
+      "maven": ">=3.6",
+      "git": ">=2.0"
+    }
+  },
+  "installation": {
+    "npx": {
+      "all": "npx skills install github:bantunes82/skills",
+      "individual": "npx skills install github:bantunes82/skills/{skill-name}"
+    },
+    "manual": {
+      "claude-code": "git clone https://github.com/bantunes82/skills.git ~/.claude/skills/springboot-upgrade",
+      "opencode": "git clone https://github.com/bantunes82/skills.git ~/.agents/skills/springboot-upgrade",
+      "github-copilot": "git clone https://github.com/bantunes82/skills.git ~/codex/skills/springboot-upgrade",
+      "gemini-cli": "git clone https://github.com//bantunes82/skills.git ~/.agents/skills/springboot-upgrade",
+      "codex": "git clone https://github.com/bantunes82/skills.git ~/codex/skills/springboot-upgrade"
+    },
+    "postInstall": [
+
+    ]
+  },
+  "documentation": {
+    "readme": "README.md",
+    "changelog": "CHANGELOG.md",
+    "contributing": "CONTRIBUTING.md"
+  },
+  "support": {
+    "issues": "https://github.com/bantunes82/skills/issues",
+    "discussions": "https://github.com/bantunes82/skills/discussions"
+  },
+  "screenshots": [],
+  "videos": [],
+  "badges": [
+    {
+      "label": "License",
+      "message": "MIT License",
+      "color": "blue"
+    },
+    {
+      "label": "Platform",
+      "message": "Claude Code | OpenCode | GitHub Copilot | Gemini CLI | Codex",
+      "color": "green"
+    }
+  ],
+  "engines": {
+    "claude-code": ">=1.0.0"
+  }
+}
