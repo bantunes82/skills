@@ -77,8 +77,8 @@ milestones, and release candidates when selecting a stable target.
 | Older 2.x | Upgrade to latest stable 2.x with the 2.7 recipe, then validate and pause. |
 | Latest stable 2.x, with the next migration confirmed | Upgrade to latest stable 3.x with the 3.5 recipe. |
 | Older 3.x | Upgrade to latest stable 3.x with the 3.5 recipe, then validate and pause. |
-| Latest stable 3.x, with the next migration confirmed | Upgrade to latest stable 4.x with the 4.1 recipe. |
-| Older 4.x | Upgrade to latest stable 4.x with the 4.1 recipe. |
+| Latest stable 3.x, with the next migration confirmed | Upgrade to latest stable 4.x with the 4.2 recipe. |
+| Older 4.x | Upgrade to latest stable 4.x with the 4.2 recipe. |
 | Already at the requested stable destination | Verify the current state and report that no version change is needed. |
 
 Do not skip a major version. A request for a distant destination does not remove
@@ -108,7 +108,7 @@ mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.46.1:run --define rewrite.re
 ### Stage: Spring Boot 4.x
 
 ```bash
-mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.46.1:run -Drewrite.recipeArtifactCoordinates=io.arconia.migrations:rewrite-spring:1.2.3 -Drewrite.activeRecipes=io.arconia.rewrite.spring.boot4.UpgradeSpringBoot_4_1
+mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.46.1:run -Drewrite.recipeArtifactCoordinates=io.arconia.migrations:rewrite-spring:1.7.0 -Drewrite.activeRecipes=io.arconia.rewrite.spring.boot4.UpgradeSpringBoot_4_2
 ```
 
 ## 3. Inspect and validate the result
