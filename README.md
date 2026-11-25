@@ -6,6 +6,7 @@ My agent skills are stored in this repository. Each skill is a separate folder w
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `springboot-upgrade` | Upgrade a Maven Spring Boot application incrementally using the self-contained workflow and pinned OpenRewrite recipes. | All |
+| `quarkus-upgrade` | Upgrade a Maven Quarkus application incrementally using the self-contained workflow, pinned OpenRewrite recipes, and the Quarkus update command. | All |
 
 ## Quick Start
 
@@ -15,6 +16,9 @@ My agent skills are stored in this repository. Each skill is a separate folder w
 ```bash
 # Spring Boot upgrade
 npx skills install github:bantunes82/skills/springboot-upgrade
+
+# Quarkus upgrade
+npx skills install github:bantunes82/skills/quarkus-upgrade
 ```
 **Managing skills:**
 ```bash
@@ -43,6 +47,8 @@ git clone https://github.com/bantunes82/skills.git ~/.claude/skills/springboot-u
 ```
 > Upgrade this SpringBoot application
 > /springboot-upgrade
+> Upgrade this Quarkus application
+> /quarkus-upgrade
 ```
 
 Skills auto-discover from `~/.agents/skills/` or `~/.claude/skills/` (for Claude Code) and your project's `skills/` directory.
@@ -58,4 +64,15 @@ Features:
 - Report all the changes applied by the OpenRewrite recipes and the ones applied by the agent itself to fix the issues that were not fixed by the recipes.
 - Run any validation/test/how to run checklist described in the `README.md`, `AGENTS.md`, and `CLAUDE.md` after each upgrade step to ensure the application is still working as expected.
 - Run some smoke tests to ensure the application is still working as expected after each upgrade step.
+- Run the agent skill in a self-contained workflow that does not require any external dependencies or tools, except for Maven and Java.
+
+### quarkus-upgrade
+Upgrade a Maven Quarkus application incrementally using the self-contained workflow, pinned OpenRewrite recipes, and the Quarkus update command.
+
+Features:
+- Incremental upgrade of Quarkus applications from 1.x or older 2.x to the latest 2.x (OpenRewrite `Quarkus1to2Migration`), and from 2.x to the latest 3.x (`quarkus-maven-plugin:update` pinned to the 3.40 stream).
+- Raise the project to Java 17 (OpenRewrite `UpgradeToJava17` + `JavaVersion17`) before moving to Quarkus 3.x when it targets an older Java version; stop and ask when a Quarkus 1.x project still targets Java 8.
+- Report all the changes applied by the OpenRewrite recipes / Quarkus update and the ones applied by the agent itself to fix the issues that were not fixed by them.
+- Run any validation/test/how to run checklist described in the `README.md`, `AGENTS.md`, and `CLAUDE.md` after each upgrade step to ensure the application is still working as expected.
+- Run smoke tests (health, OpenAPI/Swagger UI, REST endpoints, security, web UI, Dev UI) after each upgrade step to ensure the application is still working as expected.
 - Run the agent skill in a self-contained workflow that does not require any external dependencies or tools, except for Maven and Java.

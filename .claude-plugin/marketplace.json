@@ -5,8 +5,8 @@
     "url": "https://github.com/bantunes82/"
   },
   "displayName": "Bruno Skills",
-  "version": "1.0.1",
-  "description": "Platform-agnostic AI agent skills for Java/SpringBoot development.",
+  "version": "1.1.0",
+  "description": "Platform-agnostic AI agent skills for Java/SpringBoot/Quarkus development.",
   "author": {
     "name": "Bruno Romao Antunes",
     "url": "https://github.com/bantunes82/"
@@ -20,6 +20,7 @@
   "license": "MIT License",
   "keywords": [
     "springboot",
+    "quarkus",
     "java",
     "maven",
     "development",
@@ -47,6 +48,14 @@
       "path": "skills/springboot-upgrade",
       "categories": ["Java", "Development Tools"],
       "tags": ["java", "springboot", "upgrade", "maven", "dependencies"]
+    },
+    {
+      "name": "quarkus-upgrade",
+      "displayName": "Quarkus Upgrade",
+      "description": "Upgrade a Maven Quarkus application incrementally using the self-contained workflow, pinned OpenRewrite recipes, and the Quarkus update command.",
+      "path": "skills/quarkus-upgrade",
+      "categories": ["Java", "Development Tools"],
+      "tags": ["java", "quarkus", "upgrade", "maven", "dependencies"]
     }
   ],
   "tools": [
