@@ -1,0 +1,15 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.quarkus.upgrade.UpgradeToJava21
+displayName: Raise a Quarkus project to Java 21
+description: >
+  Raises the Java level of a Maven Quarkus project to 21 (the minimum for
+  Quarkus 4.x): compiler properties, the compiler plugin's release setting,
+  and GitHub Actions setup-java versions.
+recipeList:
+  - io.quarkus.updates.core.quarkus37.SetupJavaUpgradeJavaVersion:
+      minimumJavaMajorVersion: 21
+  - io.quarkus.updates.core.quarkus37.UpgradeJavaVersion:
+      version: 21
+  - org.openrewrite.maven.UseMavenCompilerPluginReleaseConfiguration:
+      releaseVersion: 21

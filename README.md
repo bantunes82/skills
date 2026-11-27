@@ -70,8 +70,10 @@ Features:
 Upgrade a Maven Quarkus application incrementally using the self-contained workflow, pinned OpenRewrite recipes, and the Quarkus update command.
 
 Features:
-- Incremental upgrade of Quarkus applications from 1.x or older 2.x to the latest 2.x (OpenRewrite `Quarkus1to2Migration`), and from 2.x to the latest 3.x (`quarkus-maven-plugin:update` pinned to the 3.40 stream).
+- Incremental upgrade of Quarkus applications from 1.x or older 2.x to the latest 2.x (OpenRewrite `Quarkus1to2Migration`), from 2.x to the latest 3.x (`quarkus-maven-plugin:update` pinned to the 3.40 stream), and from 3.x to the latest 4.x (`quarkus-maven-plugin:update` pinned to the 4.0 stream).
 - Raise the project to Java 17 (OpenRewrite `UpgradeToJava17` + `JavaVersion17`) before moving to Quarkus 3.x when it targets an older Java version; stop and ask when a Quarkus 1.x project still targets Java 8.
+- Before moving to Quarkus 4.x on a project below Java 21, ask whether to move to Java 21 (the new minimum) or Java 25 (recommended), then raise it with the OpenRewrite recipes bundled in `quarkus-upgrade/assets/`.
+- Use the official [Quarkus migration guides](https://github.com/quarkusio/quarkus/wiki/Migration-Guides) to fix any issue the recipes or the Quarkus update leave behind, citing the guide section for each manual fix.
 - Report all the changes applied by the OpenRewrite recipes / Quarkus update and the ones applied by the agent itself to fix the issues that were not fixed by them.
 - Run any validation/test/how to run checklist described in the `README.md`, `AGENTS.md`, and `CLAUDE.md` after each upgrade step to ensure the application is still working as expected.
 - Run smoke tests (health, OpenAPI/Swagger UI, REST endpoints, security, web UI, Dev UI) after each upgrade step to ensure the application is still working as expected.

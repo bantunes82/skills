@@ -1,0 +1,15 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.quarkus.upgrade.UpgradeToJava25
+displayName: Raise a Quarkus project to Java 25
+description: >
+  Raises the Java level of a Maven Quarkus project to 25 (recommended for
+  Quarkus 4.x): compiler properties, the compiler plugin's release setting,
+  and GitHub Actions setup-java versions.
+recipeList:
+  - io.quarkus.updates.core.quarkus37.SetupJavaUpgradeJavaVersion:
+      minimumJavaMajorVersion: 25
+  - io.quarkus.updates.core.quarkus37.UpgradeJavaVersion:
+      version: 25
+  - org.openrewrite.maven.UseMavenCompilerPluginReleaseConfiguration:
+      releaseVersion: 25

@@ -1,7 +1,7 @@
 ---
 name: quarkus-upgrade
-description: Upgrade an existing Maven Quarkus application to a newer Quarkus release, one validated stage at a time, using the pinned OpenRewrite recipes and `quarkus update` command in this skill. Use whenever someone wants to upgrade, migrate, bump or modernize Quarkus — e.g. 1.x → 2.x, 2.x → 3.x, an older 3.x → latest 3.x, moving off an end-of-life stream or fixing CVEs in Quarkus dependencies, running `quarkus update`, the javax → jakarta switch for a Quarkus app, or raising Java to 17 so Quarkus 3 can be used — even if the word "upgrade" never appears. Includes build and test failure repair, mandatory execution of EVERY run/validation approach documented in README.md, AGENTS.md, and CLAUDE.md after each stage, a mandatory smoke test of every interface the running application exposes (REST API, OpenAPI/Swagger UI, health, web UI, Dev UI, auth), and confirmation between stages. Not for creating new Quarkus projects, adding extensions, or upgrading other frameworks (Spring Boot, Micronaut, Jakarta EE servers).
-compatibility: Requires Maven, JDK 11+ for Quarkus 2.x and JDK 17+ for Quarkus 3.x (the Quarkus 3.40 Maven plugin itself needs JDK 17 to run), access to the configured Maven repositories, and the application's documented validation dependencies.
+description: Upgrade an existing Maven Quarkus application to a newer Quarkus release, one validated stage at a time, using the pinned OpenRewrite recipes and `quarkus update` commands in this skill. Use whenever someone wants to upgrade, migrate, bump or modernize Quarkus — e.g. 1.x → 2.x, 2.x → 3.x, an older 3.x → latest 3.x, 3.x → 4.x, moving off an end-of-life stream or fixing CVEs in Quarkus dependencies, running `quarkus update`, the javax → jakarta switch for a Quarkus app, or raising Java to 17 (Quarkus 3) or 21/25 (Quarkus 4) so a newer Quarkus can be used — even if the word "upgrade" never appears. Includes build and test failure repair, mandatory execution of EVERY run/validation approach documented in README.md, AGENTS.md, and CLAUDE.md after each stage, a mandatory smoke test of every interface the running application exposes (REST API, OpenAPI/Swagger UI, health, web UI, Dev UI, auth), and confirmation between stages. Not for creating new Quarkus projects, adding extensions, or upgrading other frameworks (Spring Boot, Micronaut, Jakarta EE servers).
+compatibility: Requires Maven, JDK 11+ for Quarkus 2.x, JDK 17+ for Quarkus 3.x (the Quarkus 3.40 Maven plugin itself needs JDK 17 to run), and JDK 21+ (25 recommended) for Quarkus 4.x, access to the configured Maven repositories, and the application's documented validation dependencies.
 ---
 
 # Quarkus upgrade
@@ -84,8 +84,8 @@ real interfaces after every step establish whether the application is ready.
   requires its wrapper, retaining the command's remaining arguments.
 - Check the Maven version that will run the build (`distributionUrl` in
   `.mvn/wrapper/maven-wrapper.properties`, otherwise `mvn -v`). Newer Quarkus
-  lines need newer Maven (Quarkus 2.16 needs 3.8.x, Quarkus 3.x needs 3.9.x;
-  confirm in the target version's prerequisites). A Maven that is too old
+  lines need newer Maven (Quarkus 2.16 needs 3.8.x, Quarkus 3.x and 4.x need
+  3.9.x; confirm in the target version's prerequisites). A Maven that is too old
   fails in confusing ways (plugin mojos that cannot be provisioned, missing
   classes at test startup), so plan to raise the wrapper's Maven version as part
   of the stage that needs it and record it as an agent change.
@@ -110,14 +110,32 @@ selecting a stable target.
 | Latest stable 2.x, with the move to 3.x confirmed, Java below 17 | Raise the project to Java 17 with the Java 17 recipe, then validate and pause. |
 | Latest stable 2.x with the move to 3.x confirmed, or older 3.x — Java 17+ | Upgrade to latest stable 3.x with `quarkus:update`, then validate and pause. |
 | Older 3.x, Java below 17 | Raise the project to Java 17 with the Java 17 recipe first, validate and pause, then `quarkus:update`. |
+| Latest stable 3.x (3.40.x), with the move to 4.x confirmed, Java below 21 | **Ask which Java level to move to** — see "Java for Quarkus 4" below — then run the matching Java 21 or Java 25 stage, validate and pause. |
+| Latest stable 3.x (3.40.x), with the move to 4.x confirmed, Java 21+ | Upgrade to latest stable 4.x with the Quarkus 4 `quarkus:update`, then validate and pause. |
 | Already at the requested stable destination | Verify the current state and report that no version change is needed. |
 
 Do not skip a major version: a 1.x application reaches the latest 2.x before
-any 3.x work begins. A request for a distant destination does not remove the
-confirmation between completed stages. If starting on the latest stable 2.x and
-the user explicitly requests 3.x, that request authorizes the first transition
-(the Java 17 stage when needed); each subsequent stage still requires the
-confirmation described in section 4.
+any 3.x work begins, and an older 3.x application reaches the latest 3.40.x
+before any 4.x work begins. A request for a distant destination does not remove
+the confirmation between completed stages. If starting on the latest stable 2.x
+(or 3.x) and the user explicitly requests 3.x (or 4.x), that request authorizes
+the first transition (the Java stage when needed); each subsequent stage still
+requires the confirmation described in section 4. A request for "the latest
+Quarkus" from 3.x therefore ends at 3.40.x and asks before starting 4.x.
+
+**Java for Quarkus 4.** Quarkus 4 requires Java 21 and recommends Java 25; Java
+17 is no longer supported. If the project targets a Java level below 21, do not
+pick one yourself — the choice affects developer machines, CI, and the runtime
+image. Explain this and ask:
+
+1. Java 21 — the new minimum (Java 21 stage below).
+2. Java 25 — recommended for Quarkus 4 (Java 25 stage below).
+3. Stop here.
+
+If the user's request already names the Java level ("move to Quarkus 4 on Java
+25"), that is the answer; do not ask again. If the project is already on Java 21
+or newer, no Java stage is needed: continue with the Quarkus 4 stage, and when
+it is below 25, mention in the report that Java 25 is recommended.
 
 **Java 8 projects.** Do not run any recipe. Explain that Quarkus 2.x needs Java
 11 or newer and that the project currently targets Java 8, then offer the
@@ -135,12 +153,15 @@ Use the commands below for each stage. Keep the pinned coordinates, recipe IDs,
 plugin versions, and stream; do not silently replace an unavailable recipe or
 upgrade the recipe artifacts. If a command cannot resolve, or its target line
 conflicts with the verified stable destination (e.g. Maven metadata shows a
-newer stable 3.x stream than 3.40), explain the evidence and ask how to proceed.
-Do not force an unpublished target or call an older result "latest."
+newer stable 3.x stream than 3.40, or a newer stable 4.x stream than 4.0),
+explain the evidence and ask how to proceed. Do not force an unpublished target
+or call an older result "latest."
 
 Run each command from the reactor root with a JDK that satisfies it: JDK 11+
-for the 1→2 recipe, JDK 17+ for the Java 17 recipe and for `quarkus:update`
-(the 3.40 plugin is compiled for Java 17). Switching the JDK that runs Maven
+for the 1→2 recipe, JDK 17+ for the Java 17 recipe and for the Quarkus 3
+`quarkus:update` (the 3.40 plugin is compiled for Java 17), and JDK 21+ for the
+Java 21 stage and the Quarkus 4 `quarkus:update` (JDK 25+ for the Java 25 stage,
+so the project can be compiled afterwards). Switching the JDK that runs Maven
 (`JAVA_HOME`, SDKMAN) does not change the project's target level; only the
 recipes and your recorded changes do.
 
@@ -193,6 +214,50 @@ The generated recipe and its log (`target/rewrite/rewrite.yaml`,
 `target/rewrite/rewrite.log`) list what was applied; copy them to the temp
 directory before the next `clean` deletes them.
 
+### Stage: Java 21 or Java 25 (before Quarkus 4.x, when the project targets Java below 21)
+
+Run only after the user chose the Java level (see "Java for Quarkus 4"). The
+recipes are declared in this skill's `assets/` directory (next to this
+`SKILL.md`), because they need per-recipe options that cannot be passed on the
+command line. Use the absolute path of that directory for
+`rewrite.configLocation`; nothing is added to the user's project.
+
+Java 21:
+
+```bash
+mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.46.1:run --define rewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-third-party:0.45.0 --define rewrite.configLocation=<skill-dir>/assets/rewrite-java21.yml --define rewrite.activeRecipes=io.quarkus.upgrade.UpgradeToJava21 --define rewrite.exportDatatables=true
+```
+
+Java 25:
+
+```bash
+mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.46.1:run --define rewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-third-party:0.45.0 --define rewrite.configLocation=<skill-dir>/assets/rewrite-java25.yml --define rewrite.activeRecipes=io.quarkus.upgrade.UpgradeToJava25 --define rewrite.exportDatatables=true
+```
+
+Each file runs `io.quarkus.updates.core.quarkus37.SetupJavaUpgradeJavaVersion`
+(GitHub Actions `setup-java` versions), `io.quarkus.updates.core.quarkus37.UpgradeJavaVersion`
+(`maven.compiler.release`/`source`/`target`), and
+`org.openrewrite.maven.UseMavenCompilerPluginReleaseConfiguration` (the compiler
+plugin's `<release>`), all set to the chosen version. Neither changes the
+Quarkus version. As with the Java 17 stage, confirm the effective Java level in
+every module, and align the non-POM places recorded in section 1 (Dockerfile
+base images, `.sdkmanrc`, `.java-version`, other CI systems) as agent changes.
+
+### Stage: Quarkus 4.x (latest 4.0 stream)
+
+```bash
+mvn -U io.quarkus.platform:quarkus-maven-plugin:4.0.1:update -N -Dstream=4.0
+```
+
+It behaves like the Quarkus 3 update — including the confirmation prompt — so
+run it as `echo y | mvn -U io.quarkus.platform:quarkus-maven-plugin:4.0.1:update -N -Dstream=4.0`,
+confirm with `git status` that the POM changed, keep the generated recipe and
+log, and confirm the resulting version is the latest stable 4.0.x in Maven
+metadata. The Quarkus 4 update rewrites a lot automatically (for example the
+Jackson 2 → 3 dependency switch), but it does not migrate everything: expect
+compile errors, test failures, or runtime differences that need the migration
+guides (section 3, step 3).
+
 ## 3. Inspect and validate the result
 
 After each recipe or update command, complete all these steps before
@@ -231,17 +296,31 @@ considering another stage:
 3. Fix migration-related compilation, unit-test (`@QuarkusTest`), and
    integration-test (`@QuarkusIntegrationTest`/`@NativeImageTest`) failures, and
    rerun the affected validation until it passes. Follow the repository's
-   conventions and the official Quarkus migration guides for every version
-   crossed (github.com/quarkusio/quarkus/wiki/Migration-Guides) for
-   javax/jakarta, RESTEasy, Hibernate ORM/Panache, security, configuration, and
-   dependency fixes.
+   conventions. When the recipe or `quarkus:update` leaves an issue behind — a
+   compile error, a failing test, an application that does not start, a failed
+   smoke check, an `Unrecognized configuration key` warning, a changed response
+   — use the official Quarkus migration guides as the source for the fix:
+   - Open the index at https://github.com/quarkusio/quarkus/wiki/Migration-Guides.
+     It lists one guide per Quarkus minor version, from 1.x to 4.x.
+   - Read the guides for every version between the starting and the resulting
+     Quarkus version (e.g. 3.2 → 3.40 means guides 3.3 … 3.40; 3.40 → 4.0 means
+     guide 4.0), find the section that explains the issue (renamed packages or
+     APIs, removed configuration properties, dropped relocations, changed
+     defaults, …), and apply the fix it describes.
+   - Cite the guide and section as the reason in the agent change log (e.g.
+     "Migration Guide 4.0 → Jackson: `ObjectMapperCustomizer` →
+     `JsonMapperBuilderCustomizer`"), so the report shows where every manual fix
+     came from.
+   - If no guide explains the issue, or the guides cannot be fetched, say so in
+     the report and rely on other official Quarkus documentation instead of
+     guessing.
 4. Check whether integration tests require an explicit profile or command beyond
    `clean install` (e.g. `verify -Dnative`, `-DskipITs=false`); inspect the
    build configuration and documented instructions, and add any such command to
    the checklist. Report skipped or unavailable tests accurately.
 5. MANDATORY — run the **entire documented validation checklist** from section 1
    after every stage, and without exception after every major-version upgrade
-   (1.x→2.x, 2.x→3.x) and the Java 17 stage. This is a hard requirement of this
+   (1.x→2.x, 2.x→3.x, 3.x→4.x) and every Java stage (17, 21, 25). This is a hard requirement of this
    skill, not a suggestion; a stage cannot be completed while any item is unrun.
    - Re-read every `README.md`, `AGENTS.md`, and `CLAUDE.md` first: the upgrade
      may have changed what they reference, and you may add items you missed.
@@ -405,7 +484,8 @@ Summarize:
   without implying success.
 - **Next:** only after every checklist item passed or was waived, ask whether
   the user wants additional validation. If a further stage is still pending
-  (Java 17, Quarkus 3.x), ask whether to proceed to that specific next stage.
+  (Java 17, Quarkus 3.x, Java 21/25, Quarkus 4.x), ask whether to proceed to
+  that specific next stage.
   Wait for the answer before executing it.
 
 Keep the final report concise and distinguish executed checks from suggested or
